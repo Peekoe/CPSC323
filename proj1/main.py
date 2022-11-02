@@ -1,4 +1,4 @@
-KEYWORDS = ['while']
+KEYWORDS = ['while', 'if', 'else', 'int', 'float', 'char', 'double', 'return', 'void', 'main']
 SYMBOLS = [';', ',']
 OPERATORS = ['+', '-', '*', '/', '=', '<', '>']
 SEPARATORS = ['(', ')']
@@ -14,7 +14,7 @@ def main():
       current += char
       continue
     
-    if len(current) > 1:
+    if len(current) > 0:
       if is_keyword(current):
         print_token('keyword', current)
       elif is_int(current):
