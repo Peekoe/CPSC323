@@ -84,7 +84,3 @@ def is_float(token: str) -> bool:
 
 if __name__ == '__main__':
   main()
-
-
-
-010
