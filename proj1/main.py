@@ -39,7 +39,7 @@ def print_token(type, current):
 
 
 def is_not_special(char: str) -> bool:
-  return char.strip() not in (SYMBOLS + SEPARATORS + OPERATORS)
+  return char.strip() not in (SYMBOLS.union(SEPARATORS).union(OPERATORS))
 
 
 def is_keyword(token: str) -> bool:
@@ -60,7 +60,7 @@ def is_int(token: str) -> bool:
   acceptingStates = [1, 2]
   state = 0
 
-  if token[0] is 0:
+  if token[0] == 0:
     state = 2
 
   for char in token[1:]:

@@ -1,1 +1,2 @@
 while (s < upper) t = 33.00;
+if(x<5) x = 17;
