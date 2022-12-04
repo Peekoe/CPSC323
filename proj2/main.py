@@ -1,102 +1,51 @@
-from enum import Enum
+parsingTable = {
+  'E': { 'a': 'TQ', '(': 'TQ' },
+  'Q': { '+': '+TQ', '-': '-TQ', ')': '', '$': '' },
+  'T': { 'a': 'FR', '(': 'FR' },
+  'R': {
+    '+': '',
+    '-': '',
+    '*': '*FR',
+    '/': '/FR',
+    ')': '',
+    '$': ''
+  },
+  'F': { 'a': 'a', '(': '(E)' }
+}
 
-with open('input.txt') as f:
-  lines = f.readlines()
 
-class State(Enum):
-  # Fail
-  Z = -1
-  # Start
-  S = 0
-  E = 1
-  Q = 2
-  T = 3
-  R = 4
-  F = 5
+def main(string):
+  stack = "E$"
 
-#make a list of operators
-ops = ['+', '-', '*', '/']
-
-def determine_state(next: str):
-  if next in ops[:2]:
-    return State.Q
-  elif next in ops[2:]:
-    return State.R
-  elif next in ['a', '(']:
-    return State.F
-  else:
-    return State.E
-
-def invalid(stack):
-  print(f'Stack: {stack}')
-  print('Output: String is not accepted/invalid.')
-
-def op_state(char):
-  if char in ops[:2]:
-    return State.E
-  elif char in ops[2:]:
-    return State.T
-  else:
-    return State.Z
-
-def is_valid(l: str):
-  print(f'Input: {l}')
-  if l[0] != '(' or l[0] != 'a':
-    print('Stack:[$]')
+  if string[0] != "a" and string[0] != "(":
+    print("Stack:", str(list(stack[::-1])))
     print('Output: String is not accepted/invalid.')
     return
-  
-  stack = []
-  state = State.S
 
-  # determine initial state
-  if state == State.S:
-    if l[0] == '(':
-      # go to (E)
-      state = State.F
-      # remove first paren
-      l = l[1:]
-    elif l[0] == 'a':
-      state = op_state(l[0])
-      l = l[1:]
+  while len(stack) > 1:
+    print(f'Input: {string}')
+    print("Stack:", str(list(stack[::-1])))
+    if stack[0] == string[0]:
+      string = string[1:]
+      stack = stack[1:]
     else:
-      invalid(stack)
-      return
+      # replace top of stack with production rule
+      first = parsingTable.get(stack[0], None)
+      second = first.get(string[0], None)
 
-  stack.push(state)
-
-  for i, char in enumerate(l):
-    if char not in ['a', '(', ')', '$'] + ops:
-      invalid(stack)
-      break
-
-    if state == State.E or state == State.T:
-      if char in ops:
-        continue
-
-      if char == 'a':
-        state.push(state)
-        state = op_state()
-      elif char == '(':
-        state = State.F
+      if second is not None:
+        stack = second + stack[1:]
       else:
+        print('Output: String is not accepted/invalid.')
+        return
 
-    elif state == State.F:
-      stack.push(state)
-      state = op_state(state)
-    
-    if state == State.Z:
-      invalid(stack)
-      break
+  if string == stack:
+    print(f"Input: {string}")
+    print("Stack:", str(list(stack[::-1])))
+    print('Output: String is accepted.')
   
-  print(f'Stack: {stack}')
-  print('Output: String is accepted.')
-
-
-  
-
-
-
-
-for line in lines:
-  is_valid(line)
+if __name__ == "__main__":
+  test_cases = ["(a+a)*a$", "a*(a/a)$", "a(a+a)$"]
+  for test_case in test_cases:
+    main(test_case)
+    print("\n\n")
